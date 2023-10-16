@@ -1,18 +1,29 @@
 const express = require("express");
 const path = require("path");
-
+require("dotenv").config();
 const app = express();
+const moviesData = require("./movies_metadata.json");
 
 // A test route to make sure the server is up.
 app.get("/api/ping", (request, response) => {
   console.log("❇️ Received GET request to /api/ping");
-  response.send("pong!");
+  response.send(`pong! @${process.env.NODE_ENV}`);
 });
 
 // A mock route to return some data.
 app.get("/api/movies", (request, response) => {
   console.log("❇️ Received GET request to /api/movies");
-  response.json({ data: [{ id: 1, name: '1' }, { id: 2, name: '2' }] });
+  response.json({
+    data: moviesData,
+  });
+});
+
+app.get("/api/movies/:id", (request, response) => {
+  console.log("❇️ Received GET request to /api/movies/{id}");
+  const id = request.params.id;
+  response.json({
+    data: moviesData.filter((movie) => movie.id === parseInt(id)),
+  });
 });
 
 // Express port-switching logic
